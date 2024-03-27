@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 3132767ece2658f46920073dcaf38ae6
+  - enabled: 1
+    path: Assets/Scenes/Level 1.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Level 2.unity
+    guid: e1927c4f79020b2408c1fb5b7babe1c7
+  - enabled: 1
+    path: Assets/Scenes/Level 3.unity
+    guid: bfeff196da7c83c4eb7d4cb2c1028f01
+  - enabled: 1
+    path: Assets/Scenes/Level 4.unity
+    guid: c8a8e848e51a8c0439661d641d141089
+  - enabled: 1
+    path: Assets/Scenes/Level 5.unity
+    guid: d51795e6034212247a81ed82ea5cbd5a
+  - enabled: 1
+    path: Assets/Scenes/Level 6.unity
+    guid: 9c21ca1b37e730748a3aa74f5f9d0ec6
+  - enabled: 1
+    path: Assets/Scenes/Level 7.unity
+    guid: 816a28671bca07045afd7c8829b2f4f2
+  - enabled: 1
+    path: Assets/Scenes/Level 8.unity
+    guid: 4494e32cbc3ebd141a519caa3561c4e5
+  - enabled: 1
+    path: Assets/Scenes/Level 9.unity
+    guid: 1d6eb4ae032f9a8418f0efb950ff31d3
+  - enabled: 1
+    path: Assets/Scenes/Level 10.unity
+    guid: 733b9cbbb1c97054887f13aae12790e2
+  - enabled: 1
+    path: Assets/Scenes/Level 11.unity
+    guid: b318cac6699773f4ca4dde79e9f8eefc
+  - enabled: 1
+    path: Assets/Scenes/Level 12.unity
+    guid: 214c825c599bc954cab3ec3afbdb729d
+  - enabled: 1
+    path: Assets/Scenes/Level 13.unity
+    guid: 4f407cbbcebaa394ba37f6328430a12d
+  - enabled: 1
+    path: Assets/Scenes/Level 14.unity
+    guid: d179f833b5631f44a92b0c8b15db6191
+  - enabled: 1
+    path: Assets/Scenes/Level 15.unity
+    guid: ab6e4b04b10697245ae5e07210ea6356
+  - enabled: 1
+    path: Assets/Scenes/Level 16.unity
+    guid: c1f404a94d3bd2b41a7c7bdf619a1d7a
+  - enabled: 1
+    path: Assets/Scenes/Level 17.unity
+    guid: 31319a523fbca104bb944aa1ace16830
+  - enabled: 1
+    path: Assets/Scenes/Level 18.unity
+    guid: 89578c5dd1c792048b5da2626d98251d
+  - enabled: 1
+    path: Assets/Scenes/Level 19.unity
+    guid: 48434f5219a90ec4c9e1552f5b7e103c
+  - enabled: 1
+    path: Assets/Scenes/Level 20.unity
+    guid: 56c087f5e5b8aa3478380cc8628046d4
+  - enabled: 1
+    path: Assets/Scenes/Shop.unity
+    guid: bc638cd675fcfea47aa43270091047bc
+  m_configObjects: {}
