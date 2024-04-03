@@ -33,11 +33,6 @@ public class ToMenu : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
-    public void Restar()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 0);
-    }
-
     /*public void ToGo()
     {
         Time.timeScale = 1;

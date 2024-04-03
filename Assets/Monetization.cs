@@ -65,7 +65,7 @@ public class Monetization : MonoBehaviour
         bool ignoreDelay = false; // По умолчанию = false
 
         // Одинаково для всех платформ
-        Bridge.advertisement.ShowInterstitial(
+        /*Bridge.advertisement.ShowInterstitial(
             ignoreDelay,
             success =>
             {
@@ -80,7 +80,7 @@ public class Monetization : MonoBehaviour
                     // Error
                     Debug.Log("Bridge.advertisement.ShowInterstitial success: " + success);
                 }
-            });
+            });*/
         return isSuccess;
     }
 

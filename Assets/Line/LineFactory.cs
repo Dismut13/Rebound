@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,123 +7,90 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public class LineFactory : MonoBehaviour
 {
-    public event System.Action LineReleased;
-    public event System.Action<float> LineProgressChanging;
-    public GameObject linePrefab;
-    [HideInInspector]
-    public Line currentLine;
-    public Transform lineParent;
-    public RigidbodyType2D lineRigidBodyType = RigidbodyType2D.Kinematic;
-    public LineEnableMode lineEnableMode = LineEnableMode.ON_CREATE;
-    public static LineFactory instance;
-    public Image lineLife;
-    public bool enableLineLife;
-    public bool isRunning;
-    [SerializeField] private LayerMask _notDrawableLayer;
-    [SerializeField] private float _maxLinePoints = 100;
-    private bool _lineCreated;
-    public GameObject Dline;
-    public GameObject DlineTwo;
-    public GameObject DlineThree;
-    public GameObject DlineFour;
+    public static LineFactory Instance { get; private set; }
 
-    public GameObject LoPanel;
-    [SerializeField] private float delayTime = 5f;
+    public event Action OnLineCreated;
+    public event Action OnLineReleased;
+    public event Action<float> OnLineProgressChanged;
+    public event Action<Vector2> OnPointAdded;
+
+    [SerializeField] private GameObject linePrefab;
+    [SerializeField, HideInInspector] private Line currentLine;
+    [SerializeField] private Transform lineParent;
+    [SerializeField] private RigidbodyType2D lineRigidBodyType = RigidbodyType2D.Kinematic;
+    [SerializeField] private LineEnableMode lineEnableMode = LineEnableMode.OnCreate;
+    [SerializeField] private bool isRunning;
+    [SerializeField] private LineLayerAllowingMode layerMode;
+    [SerializeField] private LayerMask allowedLayer;
+    [SerializeField] private LayerMask disallowedLayer;
+    [SerializeField] private float maxLinePoints = 100;
+    [SerializeField] private float maxLineCount = 1;
+
+    private int lineCount;
 
     void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Instance = this;
+
+        lineParent ??= transform;
     }
 
-    // Use this for initialization
-    void Start()
-    {
-        Time.timeScale = 0;
-
-        if (lineParent == null)
-        {
-            lineParent = GameObject.Find("Lines").transform;
-        }
-
-        if (lineLife != null)
-        {
-            if (enableLineLife)
-            {
-                lineLife.gameObject.SetActive(true);
-            }
-            else
-            {
-                lineLife.gameObject.SetActive(false);
-            }
-        }
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (!isRunning)
+            return;
+
+        if (Input.GetMouseButtonDown(0) && lineCount < maxLineCount)
+            CreateNewLine();
+
+        if (currentLine != null)
+            CheckLineReleasing();
+    }
+
+    private void CheckLineReleasing()
+    {
+        if (Input.GetMouseButtonUp(0) || currentLine.ReachedPointsLimit())
         {
+            RelaseCurrentLine();
             return;
         }
 
-        if (Input.GetMouseButtonDown(0) && !_lineCreated)
-        {
-            CreateNewLine();
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            RelaseCurrentLine();
-            Time.timeScale = 1;
-            Dline.GetComponent<Collider2D>().enabled = false;
-            DlineTwo.GetComponent<Collider2D>().enabled = false;
-            DlineThree.GetComponent<Collider2D>().enabled = false;
-            DlineFour.GetComponent<Collider2D>().enabled = false;
-            StartCoroutine("Tim");
-        }
+        if (IsLineAtLayer(disallowedLayer) || (layerMode == LineLayerAllowingMode.AllowedLayer && !IsLineAtLayer(allowedLayer)))
+            return;
 
-        if (currentLine != null && !_lineCreated)
-        {
-            if (currentLine.points.Count > _maxLinePoints) return;
-            //проверка на зону препятствий
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector3.forward, 100f, _notDrawableLayer);
-            if (!hit)
-            {
-                var lastPoint = currentLine.points.Count > 0 ?
-                    currentLine.points[currentLine.points.Count - 1] : mousePosition;
-                Vector2 rayDirection = mousePosition - lastPoint;
-                if (Physics2D.Raycast(lastPoint, rayDirection.normalized,
-                    rayDirection.magnitude, _notDrawableLayer)) return;
-                currentLine.AddPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                UpdateLineLife();
-                if (currentLine.ReachedPointsLimit())
-                {
-                    RelaseCurrentLine();
-                }
-            }
+        UpdateLineLife();
+    }
 
-        }
+    private bool IsLineAtLayer(LayerMask zoneLayer)
+    {
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var mousePosHit = Physics2D.Raycast(mousePosition, Vector3.forward, 100f, zoneLayer);
+        if (mousePosHit)
+            return true;
+
+        var lastPoint = currentLine.points.Count > 0 ?
+                currentLine.points[currentLine.points.Count - 1] :
+                mousePosition;
+        Vector2 rayDirection = mousePosition - lastPoint;
+        var toLastPointHit = Physics2D.Raycast(lastPoint, rayDirection.normalized, rayDirection.magnitude, zoneLayer);
+        if (toLastPointHit)
+            return true;
+
+        return false;
     }
 
     private void CreateNewLine()
     {
-        currentLine = (Instantiate(linePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<Line>();
+        currentLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity).GetComponent<Line>();
         currentLine.name = "Line";
         currentLine.transform.SetParent(lineParent);
         currentLine.SetRigidBodyType(lineRigidBodyType);
-        currentLine.maxPoints = _maxLinePoints;
+        currentLine.maxPoints = maxLinePoints;
 
-        if (lineEnableMode == LineEnableMode.ON_CREATE)
-        {
+        if (lineEnableMode == LineEnableMode.OnCreate)
             EnableLine();
-        }
+
+        OnLineCreated?.Invoke();
     }
 
     private void EnableLine()
@@ -133,38 +101,35 @@ public class LineFactory : MonoBehaviour
 
     private void RelaseCurrentLine()
     {
-        if (lineEnableMode == LineEnableMode.ON_RELASE && !_lineCreated)
+        if (lineEnableMode == LineEnableMode.OnRelease)
         {
             EnableLine();
-            LineReleased?.Invoke();
+            OnLineReleased?.Invoke();
             print("LINE RELEASED");
-            _lineCreated = true;
+            lineCount++;
+            currentLine = null;
         }
     }
 
     private void UpdateLineLife()
     {
-        if (!enableLineLife)
-        {
-            return;
-        }
-        var lineProgress = 1 - (currentLine.points.Count / currentLine.maxPoints);
-        LineProgressChanging?.Invoke(lineProgress);
-    }
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        currentLine.AddPoint(mousePosition);
+        OnPointAdded?.Invoke(mousePosition);
 
-    IEnumerator Tim()
-    {
-        yield return new WaitForSeconds(delayTime);
-        Time.timeScale = 0;
-        LoPanel.SetActive(true);
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 0);
+        var lineProgress = 1 - (currentLine.points.Count / currentLine.maxPoints);
+        OnLineProgressChanged?.Invoke(lineProgress);
     }
 
     public enum LineEnableMode
     {
-        ON_CREATE,
-        ON_RELASE
+        OnCreate,
+        OnRelease
     }
 
-    ;
+    enum LineLayerAllowingMode
+    {
+        Ignore,
+        AllowedLayer
+    }
 }
