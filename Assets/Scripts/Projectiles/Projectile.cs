@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Entities;
+using Assets.Scripts.Sounds;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.Projectiles
@@ -19,22 +21,48 @@ namespace Assets.Scripts.Projectiles
 
             if (collision.gameObject.CompareTag(TagManager.Enemy))
             {
-                Destroy(collision.gameObject);
+                collision.gameObject.GetComponent<Enemy>().Die();
             }
             else if (collision.gameObject.CompareTag(TagManager.Player))
             {
                 GameManager.Instance.Defeat();
-                Destroy(gameObject);
+                Die();
             }
 
             if (collisionCount == 5)
-                Destroy(gameObject);
+                Die();
+
+            GameSoundManager.Instance.PlayRebound();
         }
+
+        void Update()
+        {
+            if (!GetScreenWorldRect().Contains(transform.position))
+            {
+                Die();
+            }
+        }
+
+        private Rect GetScreenWorldRect()
+        {
+            var camera = Camera.main;
+            Vector3 bottomLeft = camera.ViewportToWorldPoint(new Vector3(0f, 0f, 0f));
+            Vector3 topRight = camera.ViewportToWorldPoint(new Vector3(1f, 1f, 0f));
+            return (new Rect(bottomLeft.x, bottomLeft.y, topRight.x * 2f, topRight.y * 2f));
+        }
+
 
         public void InstantiatePrefab(Vector3 position, Vector3 force)
         {
             var projectile = Instantiate(gameObject, position, Quaternion.identity, GlobalParameters.Instance.ProjectileHolder).GetComponent<Projectile>();
             projectile.rigidbody.AddForce(force);
+        }
+
+        private void Die()
+        {
+            if (EnemyManager.Instance.EnemyCount > 0)
+                GameManager.Instance.Defeat();
+            Destroy(gameObject);
         }
     }
 }

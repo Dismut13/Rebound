@@ -40,7 +40,7 @@ public class LineFactory : MonoBehaviour
         if (!isRunning)
             return;
 
-        if (Input.GetMouseButtonDown(0) && lineCount < maxLineCount)
+        if (Input.GetMouseButtonDown(0) && lineCount < maxLineCount && IsAtRightZone)
             CreateNewLine();
 
         if (currentLine != null)
@@ -55,11 +55,13 @@ public class LineFactory : MonoBehaviour
             return;
         }
 
-        if (IsLineAtLayer(disallowedLayer) || (layerMode == LineLayerAllowingMode.AllowedLayer && !IsLineAtLayer(allowedLayer)))
+        if (!IsAtRightZone)
             return;
 
         UpdateLineLife();
     }
+
+    private bool IsAtRightZone => !IsLineAtLayer(disallowedLayer) && !(layerMode == LineLayerAllowingMode.AllowedLayer && !IsLineAtLayer(allowedLayer));
 
     private bool IsLineAtLayer(LayerMask zoneLayer)
     {
@@ -68,13 +70,16 @@ public class LineFactory : MonoBehaviour
         if (mousePosHit)
             return true;
 
-        var lastPoint = currentLine.points.Count > 0 ?
-                currentLine.points[currentLine.points.Count - 1] :
-                mousePosition;
-        Vector2 rayDirection = mousePosition - lastPoint;
-        var toLastPointHit = Physics2D.Raycast(lastPoint, rayDirection.normalized, rayDirection.magnitude, zoneLayer);
-        if (toLastPointHit)
-            return true;
+        if (currentLine != null)
+        {
+            var lastPoint = currentLine.points.Count > 0 ?
+                    currentLine.points[currentLine.points.Count - 1] :
+                    mousePosition;
+            Vector2 rayDirection = mousePosition - lastPoint;
+            var toLastPointHit = Physics2D.Raycast(lastPoint, rayDirection.normalized, rayDirection.magnitude, zoneLayer);
+            if (toLastPointHit)
+                return true;
+        }
 
         return false;
     }

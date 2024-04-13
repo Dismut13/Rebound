@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Projectiles;
+using Assets.Scripts.Sounds;
 using System.Collections;
 using UnityEngine;
 
@@ -10,16 +11,18 @@ namespace Assets.Scripts.Entities
         [SerializeField] private Projectile projectile;
         [SerializeField] private float attackForce = 2;
 
-        public bool HasAttacked { get; private set; }
+        public bool HasAttack { get; private set; }
 
         public void Attack()
         {
-            if (!HasAttacked)
+            if (!HasAttack)
             {
-                HasAttacked = true;
+                HasAttack = true;
 
                 var force = new Vector3(Mathf.Cos(arrow.eulerAngles.z * Mathf.Deg2Rad), -Mathf.Sin(arrow.eulerAngles.z * Mathf.Deg2Rad)) * attackForce;
                 projectile.InstantiatePrefab(arrow.position, force);
+
+                GameSoundManager.Instance.PlayAttack();
             }
         }
     }

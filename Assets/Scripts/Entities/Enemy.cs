@@ -1,21 +1,22 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Sounds;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.Entities
 {
     public class Enemy : MonoBehaviour
     {
-
-        // Use this for initialization
-        void Start()
+        private void Start()
         {
-
+            EnemyManager.Instance.OnEnemyCreate();
         }
 
-        // Update is called once per frame
-        void Update()
+        public void Die()
         {
+            GameSoundManager.Instance.PlayEnemyDie();
+            EnemyManager.Instance.OnEnemyDie();
 
+            Destroy(gameObject);
         }
     }
 }

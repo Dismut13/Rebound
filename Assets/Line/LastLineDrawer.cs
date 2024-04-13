@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class LastLineDrawer : MonoBehaviour
 {
-    [SerializeField] private LineFactory lineFactory = new();
+    [SerializeField] private LineFactory lineFactory;
     [SerializeField] private LastLineSaver saver;
     [SerializeField] private GameObject linePrefab;
     [SerializeField] private Transform lineParent;
