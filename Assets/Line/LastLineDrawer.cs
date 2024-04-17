@@ -42,4 +42,9 @@ public class LastLineDrawer : MonoBehaviour
 
         return currentLine;
     }
+
+    public void Clear()
+    {
+        saver.Clear();
+    }
 }

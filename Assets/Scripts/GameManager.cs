@@ -12,6 +12,8 @@ namespace Assets.Scripts
     {
         public static GameManager Instance;
 
+        [SerializeField] private LastLineDrawer lastLineDrawer;
+
         [SerializeField] private Transform[] confetti;
         private List<string> levelScenes = new();
 
@@ -24,8 +26,10 @@ namespace Assets.Scripts
                     levelScenes.Add(scene.path.Split('/')[^1].Split('.')[0]);
         }
 
-        public void Defeat()
+        public void Defeat(bool drawLastLine = true)
         {
+            if (!drawLastLine)
+                lastLineDrawer.Clear();
             StartCoroutine(ExecuteAfterTime(1, Restar));
         }
 

@@ -9,10 +9,13 @@ namespace Assets.Scripts.Projectiles
     {
         private Rigidbody2D rigidbody;
         private int collisionCount;
+        private float spawnTime;
+        private float dontHitPlayerCD = 0.2f;
 
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
+            spawnTime = Time.timeSinceLevelLoad;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -25,8 +28,11 @@ namespace Assets.Scripts.Projectiles
             }
             else if (collision.gameObject.CompareTag(TagManager.Player))
             {
-                GameManager.Instance.Defeat();
-                Die();
+                if (Time.timeSinceLevelLoad - spawnTime > dontHitPlayerCD)
+                {
+                    GameManager.Instance.Defeat(false);
+                    Die();
+                }
             }
 
             if (collisionCount == 5)
