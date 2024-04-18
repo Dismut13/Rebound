@@ -43,6 +43,8 @@ namespace Assets.Scripts.Projectiles
 
         void Update()
         {
+            rigidbody.velocity = rigidbody.velocity.normalized * targetVelocity;
+
             if (!GetScreenWorldRect().Contains(transform.position))
             {
                 Die();
@@ -57,11 +59,12 @@ namespace Assets.Scripts.Projectiles
             return (new Rect(bottomLeft.x, bottomLeft.y, topRight.x * 2f, topRight.y * 2f));
         }
 
-
-        public void InstantiatePrefab(Vector3 position, Vector3 force)
+        private float targetVelocity;
+        public void InstantiatePrefab(Vector3 position, Vector3 force, float targetVelocity)
         {
             var projectile = Instantiate(gameObject, position, Quaternion.identity, GlobalParameters.Instance.ProjectileHolder).GetComponent<Projectile>();
             projectile.rigidbody.AddForce(force);
+            projectile.targetVelocity = targetVelocity;
         }
 
         private void Die()

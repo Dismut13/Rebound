@@ -21,6 +21,10 @@ namespace Assets.Scripts.Sounds
 
             SettingsManager.OnSoundVolumeChanged += OnSoundVolumeChanged;
             SettingsManager.OnMusicVolumeChanged += OnMusicVolumeChanged;
+            SettingsManager.OnMuteChanged += (mute) => {
+                OnSoundVolumeChanged(SettingsManager.SoundVolume);
+                OnMusicVolumeChanged(SettingsManager.MusicVolume);
+            };
             OnSoundVolumeChanged(SettingsManager.SoundVolume);
             OnMusicVolumeChanged(SettingsManager.MusicVolume);
 
@@ -39,9 +43,9 @@ namespace Assets.Scripts.Sounds
             SettingsManager.MusicVolume = value;
 
         private void OnSoundVolumeChanged(float value) => 
-            effectsAudioSource.volume = value;
+            effectsAudioSource.volume = SettingsManager.Mute ? 0 : value;
         private void OnMusicVolumeChanged(float value) =>
-            musicAudioSource.volume = value;
+            musicAudioSource.volume = SettingsManager.Mute ? 0 : value;
 
         public void PlayMusic()
         {

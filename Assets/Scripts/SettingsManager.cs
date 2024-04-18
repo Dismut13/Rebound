@@ -25,11 +25,20 @@ namespace Assets.Scripts
         private static float musicVolume;
         public static event Action<float> OnMusicVolumeChanged;
 
-        [RuntimeInitializeOnLoadMethod]
+        public static bool Mute { get => mute; set { 
+                SaveValue("mute", value);
+                mute = value;
+                OnMuteChanged?.Invoke(value);
+            } }
+        private static bool mute;
+        public static event Action<bool> OnMuteChanged;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Init()
         {
             soundVolume = LoadValue("soundVolume", 1f);
             musicVolume = LoadValue("musicVolume", 1f);
+            mute = LoadValue("mute", false);
         }
 
         private static void SaveValue(string name, float value)
@@ -44,15 +53,22 @@ namespace Assets.Scripts
         {
             PlayerPrefs.SetString(name, value);
         }
+        private static void SaveValue(string name, bool value)
+        {
+            PlayerPrefs.SetInt(name, value ? 1 : 0);
+        }
 
         private static float LoadValue(string name, float defaultValue = 0)
         {
             return PlayerPrefs.GetFloat(name, defaultValue);
         }
-
         private static int LoadValue(string name, int defaultValue = 0)
         {
             return PlayerPrefs.GetInt(name, defaultValue);
+        }
+        private static bool LoadValue(string name, bool defaultValue = false)
+        {
+            return PlayerPrefs.GetInt(name, defaultValue ? 1 : 0) == 1;
         }
     }
 }

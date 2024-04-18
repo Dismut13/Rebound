@@ -20,7 +20,7 @@ namespace Assets.Scripts.Entities
                 HasAttack = true;
 
                 var force = new Vector3(Mathf.Cos(arrow.eulerAngles.z * Mathf.Deg2Rad), -Mathf.Sin(arrow.eulerAngles.z * Mathf.Deg2Rad)) * attackForce;
-                projectile.InstantiatePrefab(arrow.position, force);
+                projectile.InstantiatePrefab(arrow.position, force, 30);
 
                 GameSoundManager.Instance.PlayAttack();
             }
