@@ -225,4 +225,4 @@ MonoBehaviour:
   pointZPosition: 0
   autoAddColliderPoint: 1
   maxPoints: 5000
-  timeInSec: 50
+  timeInSec: 500
